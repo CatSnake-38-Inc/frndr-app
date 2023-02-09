@@ -1,8 +1,3 @@
-.ownMessage {
-  background: lightblue;
-  align-content: left;
-}
-
 .feedBox {
   display: flex;
 }
@@ -10,32 +5,50 @@
 .chatBox {
   position: absolute;
   z-index: 999;
-  background-color: antiquewhite;
-  top: 5%;
-  left: 7%;
+  background-color: #1e1e1e;
+  top: 3%;
+  left: 6.5%;
   border: 0.5px solid $primary-font-color;
   box-shadow: 5px 5px 10px $box-shadow-color;
   border-radius: 6px;
-  padding: 14px;
+  padding: 80px 14px 14px 14px;
   font-size: 4vw;
-  height: 40vw;
+  height: 100vw;
   width: 80vw;
   overflow: scroll;
 
   // turn off the default scrolling behavior for all chatbox elements
   * { overflow-anchor: none; }
 
-  .chatBox-li {
+  p {
     border: 0.5px solid $primary-font-color;
-    border-radius: 12px;
-    padding: 4px 0 4px 10px;
-    background-color: #f7f7f7;
+    border-radius: 18px;
+    padding: 8px 0 8px 14px;
+    background-color: #3b3b3d;
+    color: #d6d6d7;
+    margin: 10px auto;
+  }
+
+  .ownMessage {
+    background-color: lightblue;
+    // align-content: left;
+  }
+
+  .exit {
+    position: absolute;
+    top: 2.5%;
+    left: 90%;
+    color: #d6d6d7;
+    border: 0.2px solid #d6d6d7;
+    border-radius: 15px;
+    padding: 2px 8px;
   }
 }
 
 .input-button {
   display: flex;
   gap: 5px;
+  align-self: flex-end;
 
   input {
     width: -webkit-fill-available;
@@ -43,12 +56,26 @@
     border: 0.5px solid $primary-font-color;
     border-radius: 12px;
     padding-left: 10px;
+    background-color: #1e1e1e;
+    border: 0.2px solid #d6d6d7;
+    color: #d6d6d7;
+    font-size: 4vw;
+  }
+
+  input:focus {
+    outline: none !important;
   }
 
   button {
-    width: 20vw;
+    width: 7vw;
+    background-color: #1e1e1e;
     height: 3vh;
     font-size: 4vw;
+    padding: 5px 2px 0 0;
+    border: 0.2px solid #d6d6d7;
+    border-radius: 50px;
+
+    svg path { color: #d6d6d7; }
   }
 }
 
@@ -56,4 +83,17 @@
 #anchor {
   overflow-anchor: auto;
   height: 1px;
+}
+
+.open-chat {
+  position: absolute;
+  font-size: 6vw;
+  transform: rotate(270deg);
+  background-color: #1e1e1e;
+  color: #d6d6d7;
+  padding: 8px 14px;
+  top: 80%;
+  left: 76.5%;
+  width: max-content;
+  border-radius: 12px 12px 0 0;
 }

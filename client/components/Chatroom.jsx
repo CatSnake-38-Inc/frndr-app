@@ -14,24 +14,20 @@ import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 const socket = io();
 
-// create two new state properties, msgSent and msgReceived
-// inside onClick method, set msgSent to inputValue
-// inside socket.on, set msgReceived to msg;
-// inside map function, set conditional: if msgSent === msgReceived, create the same div but with a className ownMessage
-// in styling, set ownMessage to style differently (background color, alignment)
-
 const Chatroom = (props) => {
-  console.log("chatroom rendered");
+  // console.log("chatroom rendered");
   // userMap will contain: // {_id : {_id, statusName, firstName, lastName, phoneNumber,email, username, location, statusname, picture}
-  const userMap = useSelector((state) => state.frndr.userMap);
+  // const userMap = useSelector((state) => state.frndr.userMap);
 
+ 
   // use useState to create local state
   const [inputValue, setInputValue] = useState("");
-  const [messages, addMessages] = useState(["start of chat!"]);
+  const [messages, addMessages] = useState([]);
   const [msgSent, addMsgSent] = useState(" ");
   const [ownMessage, changeOwnMessage] = useState([]);
   const [msgReceived, addMsgReceived] = useState("");
   const [lengthOfAddMessages, changeLengthOfAddMessages] = useState(1);
+  const [maxLengthOfAddMessages, changeMaxLengthOfAddMessages] = useState(1);
 
   // listen for incoming messages and update state
   socket.on("chat message", (msg) => {
@@ -41,78 +37,85 @@ const Chatroom = (props) => {
       newArray.push(msg);
       addMsgReceived(newArray[newArray.length - 1]);
       addMessages(newArray);
-      changeLengthOfAddMessages(newArray.length);
+      if (newArray.length > messages.length) {
+        changeLengthOfAddMessages(newArray.length);
+      }
       //   console.log("in socket on conditional");
     }
   });
 
   useEffect(() => {
-    console.log("before: messages in useEffect", messages);
-    console.log("before: MsgReceived in useEffect", msgReceived);
-    console.log("before: msgSent in useEffect:", msgSent);
-    console.log("before: ownMessage in useEffect:", ownMessage);
     if (msgReceived === msgSent) {
-      console.log("in ownMessage conditional");
       const newArray = [...ownMessage];
-      newArray.push("ownMessage");
-      console.log("newArray in ownMessage: ", newArray);
+      if (newArray.length < messages.length) {
+        newArray.push("ownMessage");
+      }
       changeOwnMessage([...newArray]);
     } else {
-      console.log("in notOwnMessage conditional");
       const newArray = [...ownMessage];
-      newArray.push("notOwnMessage");
-      console.log("newArray in notOwnMessage: ", newArray);
+      if (newArray.length < messages.length) {
+        newArray.push("notOwnMessage");
+      }
       changeOwnMessage([...newArray]);
       //   console.log("ownMessage at end of useEffect: ", ownMessage);
     }
-    console.log("ending: messages in useEffect", messages);
-    console.log("ending: MsgReceived in useEffect", msgReceived);
-    console.log("ending: msgSent in useEffect:", msgSent);
-    console.log("ending: ownMessage in useEffect:", ownMessage);
   }, [lengthOfAddMessages]);
 
-
-  // QUESTIONS:
-  //- why are we getting multiple server-side websocket emissions from a single client side emission
-  // why is the initially declared message being rendered as a div, but not additional messages => useEffect?
-  // multiple messages could be because there are multiple instances of local server
-
   return (
-    <div className="chatBox">
-      <div id="messages">
-        {messages.map((el, i) => (
-          <p key={i} className={ownMessage[i]}>
-            {el}
-          </p>
-        ))}
+    <>
+      <div className="chatBox">
+        <div
+          className="exit"
+          onClick={() => {
+            document.querySelector('.chatBox').style.display = 'none';
+          }}
+        >x</div>
+        
+        <div id="messages">
+          {messages.map((el, i) => (
+            <p key={i} className={ownMessage[i]}>
+              {el}
+            </p>
+          ))}
+        </div>
+
+        <div id="anchor"></div>
+
+        <div className="input-button">
+          <input
+            id="input"
+            type="text"
+            name="input"
+            value={inputValue}
+            //   autoComplete="off"
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              //   console.log(inputValue);
+            }}
+          />
+          <button
+            onClick={(e) => {
+              const msg = inputValue;
+              socket.emit("chat message", msg);
+              setInputValue("");
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div id="anchor"></div>
-
-      <div className="input-button">
-        <input
-          id="input"
-          type="text"
-          name="input"
-          value={inputValue}
-          //   autoComplete="off"
-          onChange={(e) => {
-            setInputValue(e.target.value);
-            //   console.log(inputValue);
-          }}
-        />
-        <button
-          onClick={(e) => {
-            const msg = inputValue;
-            socket.emit("chat message", msg);
-            setInputValue("");
-          }}
-        >
-          Send
-        </button>
+      <div
+        className="open-chat"
+        onClick={() => {
+          document.querySelector('.chatBox').style.display = 'block';
+        }}
+      >
+        Open chat
       </div>
-
-    </div>
+    </>
   );
 };
 
