@@ -135,6 +135,7 @@ const WelcomePage = (props) => {
         btnDisabled={true}
       /> */}
       <GMap className='google-map' />
+      <Chatroom />
       {hangoutsArr}
       {/* <Chatroom /> */}
 
